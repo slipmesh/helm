@@ -20,9 +20,11 @@ CNI plugins already shipped in `/opt/cni/bin` on Talos v1.8+. No Calico/Flannel 
 - `values.yaml` - tracked chart defaults: image refs, resource limits, log levels, and the
   generic/mechanical structure of every value (empty placeholders for anything
   deployment-specific - see below).
-- `.values.yaml` - **not committed** (see `.gitignore`): the real, environment-specific facts
-  for one particular deployment - node IPs, pool CIDRs, per-link obfuscation keys, bypass ASN
-  lists, road-warrior client identities. Always merge it on top:
+- `.values.yaml` - not part of this chart: the real, environment-specific facts for one
+  particular deployment - node IPs, pool CIDRs, per-link obfuscation keys, bypass ASN lists,
+  road-warrior client identities. Every deployment's own copy lives in its own separate
+  (typically private) infra repo instead, since the actual values differ per deployment and
+  often carry real secrets. Always merge it on top:
 
   ```sh
   helm upgrade slipmesh . -n slipmesh -f .values.yaml
@@ -48,7 +50,8 @@ gets `get`/`create` access to (`mesh-keys`, `roadwarriors-key`).
 
 ## `.values.yaml` template
 
-Create this file next to `values.yaml` (it's gitignored) with your real values. Anything
+Create this file next to `values.yaml` (in your own infra repo, not this one) with your real
+values. Anything
 omitted here falls back to `values.yaml`'s empty placeholder, which will fail CRD validation
 (`format: cidr`, etc.) at apply time - that's intentional, so a missing local value fails
 loudly instead of silently deploying nothing.

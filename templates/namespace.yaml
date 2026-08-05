@@ -5,5 +5,7 @@ metadata:
   name: {{ include "slipmesh.namespace" . }}
   labels:
     pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/warn: privileged
+    pod-security.kubernetes.io/audit: privileged
     {{- include "slipmesh.labels" . | nindent 4 }}
 {{- end }}
