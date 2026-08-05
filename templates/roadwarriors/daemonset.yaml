@@ -50,14 +50,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: ROADWARRIORS_IFACE
-              value: {{ .Values.roadwarriors.iface | quote }}
-            - name: ROADWARRIORS_ADDRESS
-              value: {{ .Values.roadwarriors.address | quote }}
-            - name: ROADWARRIORS_LISTEN_PORT
-              value: {{ .Values.roadwarriors.listenPort | quote }}
-            - name: ROADWARRIORS_HANDSHAKE_STALE
-              value: {{ .Values.roadwarriors.handshakeStaleSeconds | quote }}
             - name: RUST_LOG
               value: {{ .Values.logLevel.roadwarriors | quote }}
           resources:

@@ -35,6 +35,25 @@ CNI plugins already shipped in `/opt/cni/bin` on Talos v1.8+. No Calico/Flannel 
   on `helm install`, never updates/deletes them on `upgrade`/`uninstall` - if the operators'
   CRD schema changes, re-run `*-crdgen` and `kubectl apply -f crds/` by hand.
 
+## Configuration: what's live, what needs a restart
+
+Three different answers to "I changed a value in `.values.yaml`, when does it take effect":
+
+- **Plain env vars** (`NODE_NAME`/`POD_NAMESPACE` downward-API identity - not a chart value at
+  all, and `BIRD_CONF_PATH`/`CNI_CONFLIST_PATH`, which this chart doesn't set - deployment/image
+  details `router` already defaults sensibly on its own) - a `helm upgrade` that changes the pod
+  spec always triggers a rollout, so these take effect as soon as the new pods are up.
+- **CRDs the operators read once at startup, never watched** (`RouterConfig.spec.bgpAs`/
+  `.bypassRefreshIntervalSeconds`, every field of `RoadWarriorConfig`) - `helm upgrade` updates
+  the CRD object immediately, but the already-running `router`/`roadwarriors` pods won't pick up
+  the new value until they restart. A plain `.values.yaml` edit + `helm upgrade` with no image
+  change won't restart anything by itself - follow up with `kubectl rollout restart
+  daemonset/router` (or `roadwarriors`) if you need it applied sooner than the next natural
+  restart.
+- **CRDs watched reactively** (`nodes`/`mesh.*`/`router.pool`/`router.bypassSources`/
+  `roadwarriors.clients`) - a `helm upgrade` change reaches the running pods within seconds, no
+  restart needed.
+
 ## Quick start
 
 Fill in `.values.yaml` (see template below), then install/upgrade:

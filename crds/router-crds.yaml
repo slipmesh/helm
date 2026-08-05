@@ -430,6 +430,17 @@ spec:
                 maximum: 4294967295.0
                 minimum: 1.0
                 type: integer
+              bypassRefreshIntervalSeconds:
+                description: |-
+                  How often `router` re-resolves each `BypassSource` (RIPEstat/DNS lookups) - `None` means
+                  "use the built-in default" (currently 24h), decided in `router`'s own code, not here. Was
+                  previously the `ROUTER_BYPASS_REFRESH_INTERVAL` env var - unlike `bgp_as`, this is a pure
+                  tuning knob with a sensible built-in default, so it stays optional rather than failing
+                  loudly when unset.
+                format: uint64
+                minimum: 0.0
+                nullable: true
+                type: integer
             required:
             - bgpAs
             type: object
