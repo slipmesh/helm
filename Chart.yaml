@@ -7,7 +7,7 @@ description: >-
 type: application
 version: 0.2.1
 appVersion: "0.2.1"
-home: https://github.com/ffaxl/slipmesh-operators-helm
+home: https://github.com/slipmesh/helm
 sources:
-  - https://github.com/ffaxl/slipmesh-operators-helm
-  - https://github.com/ffaxl/slipmesh-operators
+  - https://github.com/slipmesh/helm
+  - https://github.com/slipmesh/operators
