@@ -1,4 +1,6 @@
-# slipmesh: mesh + router + nftables, full mesh across all listed `nodes`.
+# slipmesh: mesh + router + nftables DaemonSets across all listed `nodes`. Mesh topology is
+# an explicit link list (`mesh.links` below), not automatic full mesh - nodes don't imply
+# links.
 #
 # "cni" has no separate component here: router writes /etc/cni/net.d/10-slipmesh.conflist
 # itself from the node's PodCIDR at startup, using the bridge/host-local/loopback CNI plugins
@@ -55,12 +57,12 @@ resources:
       cpu: 200m
       memory: 100Mi
 
-# Every entry here becomes one MeshNode + one RouterNode; every unordered pair becomes one
-# MeshLink (full mesh). `name` must equal the Kubernetes Node object name. `endpoint` is the
-# public address peers dial in on for the WireGuard tunnel.
+# Every entry here becomes one MeshNode + one RouterNode. `name` must equal the Kubernetes
+# Node object name. `endpoint` is the public address peers dial in on for the WireGuard
+# tunnel. Being listed here does not by itself create any MeshLink - see `mesh.links` below.
 #
 # Empty here on purpose: real node IPs are environment-specific and live in the gitignored
-# .values.yaml (merge with `-f .values.yaml`). Same for mesh.pool/linkObfuscation,
+# .values.yaml (merge with `-f .values.yaml`). Same for mesh.pool/links,
 # router.pool/bypassSources, and roadwarriors.nodeHostnames/address/listenPort/clients below.
 nodes: []
 
@@ -68,7 +70,7 @@ mesh:
   # MeshLinks draw their /31 + UDP port from this pool instead of being hand-assigned.
   pool: {}
 
-  # Shared AmneziaWG jitter/junk-packet parameters applied to every full-mesh link.
+  # Shared AmneziaWG jitter/junk-packet parameters applied to every obfuscated link.
   obfuscation:
     jc: 4
     jmin: 40
@@ -76,12 +78,23 @@ mesh:
     s1: 50
     s2: 100
 
-  # Per-link magic header values (h1-h4), keyed by "<meshLabelA>-<meshLabelB>" in the same
-  # order the two nodes appear in `nodes` above. Required to be present (and distinct) for a
-  # link to get AmneziaWG obfuscation; a missing key means that link runs plain WireGuard.
-  # Generated once (random uint32s) per deployment - keep stable across upgrades, since
-  # changing them flaps the tunnel's handshake.
-  linkObfuscation: {}
+  # Explicit adjacency list - one MeshLink per entry, nothing implied by `nodes` above. Two
+  # nodes with no matching entry here simply never peer.
+  #
+  # `pair` names two `nodes[].meshLabel` values; the first-listed one becomes
+  # MeshLink.spec.nodeA (takes the lower /31 address - see the CRD's own doc comment on why
+  # this matters for pinning a non-Kubernetes MeshNode as nodeB).
+  #
+  # `obfuscation` (h1-h4 magic headers) is optional per link - omit it and that link runs
+  # plain WireGuard. Generate h1-h4 once per link (random uint32s, max 4294967295) and keep
+  # them stable across upgrades, since changing them flaps that link's handshake.
+  #
+  # e.g.:
+  #   links:
+  #     - pair: [node-a, node-b]
+  #       obfuscation: { h1: 111111111, h2: 111111112, h3: 111111113, h4: 111111114 }
+  #     - pair: [node-a, node-c]
+  links: []
 
 router:
   # AS 64496-64511 is IANA-reserved specifically for documentation (RFC 5398), same idea as the

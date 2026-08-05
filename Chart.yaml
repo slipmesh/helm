@@ -1,9 +1,9 @@
 apiVersion: v2
 name: slipmesh
 description: >-
-  Full-mesh AmneziaWG overlay (mesh), BIRD OSPF/iBGP routing + bridge CNI conflist (router),
-  and NAT/masquerade firewall (nftables) for the slipmesh.net operators, deployed as
-  DaemonSets across a full mesh of Talos nodes.
+  AmneziaWG mesh overlay with explicit link topology (mesh), BIRD OSPF/iBGP routing + bridge
+  CNI conflist (router), and NAT/masquerade firewall (nftables) for the slipmesh.net
+  operators, deployed as DaemonSets across Talos nodes.
 type: application
 version: 0.3.0
 appVersion: "0.3.0"

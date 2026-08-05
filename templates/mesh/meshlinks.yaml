@@ -1,32 +1,50 @@
-{{- $root := . }}
 {{- $ns := include "slipmesh.namespace" . }}
-{{- $nodes := .Values.nodes }}
-{{- range $i, $a := $nodes }}
-{{- range $j, $b := $nodes }}
-{{- if lt $i $j }}
+{{- $labelToName := dict }}
+{{- range .Values.nodes }}
+{{- if hasKey $labelToName .meshLabel }}
+{{- fail (printf "nodes[].meshLabel: %q is used by more than one node - meshLabel must be unique" .meshLabel) }}
+{{- end }}
+{{- $_ := set $labelToName .meshLabel .name }}
+{{- end }}
+{{- range .Values.mesh.links }}
+{{- if not .pair }}
+{{- fail (printf "mesh.links: entry %v is missing a pair" .) }}
+{{- end }}
+{{- if ne (len .pair) 2 }}
+{{- fail (printf "mesh.links: pair %v must have exactly 2 elements" .pair) }}
+{{- end }}
+{{- $a := index .pair 0 }}
+{{- $b := index .pair 1 }}
+{{- if eq $a $b }}
+{{- fail (printf "mesh.links: pair %v links a node to itself" .pair) }}
+{{- end }}
+{{- $nodeA := get $labelToName $a }}
+{{- $nodeB := get $labelToName $b }}
+{{- if not $nodeA }}
+{{- fail (printf "mesh.links: pair %v references unknown meshLabel %q (not in nodes[].meshLabel)" .pair $a) }}
+{{- end }}
+{{- if not $nodeB }}
+{{- fail (printf "mesh.links: pair %v references unknown meshLabel %q (not in nodes[].meshLabel)" .pair $b) }}
+{{- end }}
 ---
 apiVersion: slipmesh.net/v1alpha1
 kind: MeshLink
 metadata:
-  name: {{ $a.meshLabel }}-{{ $b.meshLabel }}
+  name: {{ $a }}-{{ $b }}
   namespace: {{ $ns }}
 spec:
-  nodeA: {{ $a.name }}
-  nodeB: {{ $b.name }}
-  {{- $key := printf "%s-%s" $a.meshLabel $b.meshLabel }}
-  {{- $ob := get $root.Values.mesh.linkObfuscation $key }}
-  {{- if $ob }}
+  nodeA: {{ $nodeA }}
+  nodeB: {{ $nodeB }}
+  {{- if .obfuscation }}
   obfuscation:
-    jc: {{ $root.Values.mesh.obfuscation.jc }}
-    jmin: {{ $root.Values.mesh.obfuscation.jmin }}
-    jmax: {{ $root.Values.mesh.obfuscation.jmax }}
-    s1: {{ $root.Values.mesh.obfuscation.s1 }}
-    s2: {{ $root.Values.mesh.obfuscation.s2 }}
-    h1: {{ $ob.h1 | int64 }}
-    h2: {{ $ob.h2 | int64 }}
-    h3: {{ $ob.h3 | int64 }}
-    h4: {{ $ob.h4 | int64 }}
+    jc: {{ $.Values.mesh.obfuscation.jc }}
+    jmin: {{ $.Values.mesh.obfuscation.jmin }}
+    jmax: {{ $.Values.mesh.obfuscation.jmax }}
+    s1: {{ $.Values.mesh.obfuscation.s1 }}
+    s2: {{ $.Values.mesh.obfuscation.s2 }}
+    h1: {{ .obfuscation.h1 | int64 }}
+    h2: {{ .obfuscation.h2 | int64 }}
+    h3: {{ .obfuscation.h3 | int64 }}
+    h4: {{ .obfuscation.h4 | int64 }}
   {{- end }}
-{{- end }}
-{{- end }}
 {{- end }}
