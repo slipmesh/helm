@@ -1,11 +1,23 @@
 {{- $ns := include "slipmesh.namespace" . }}
 {{- $labelToName := dict }}
 {{- range .Values.nodes }}
+{{- if hasKey $labelToName .meshLabel }}
+{{- fail (printf "nodes[].meshLabel: %q is used by more than one node - meshLabel must be unique" .meshLabel) }}
+{{- end }}
 {{- $_ := set $labelToName .meshLabel .name }}
 {{- end }}
 {{- range .Values.mesh.links }}
+{{- if not .pair }}
+{{- fail (printf "mesh.links: entry %v is missing a pair" .) }}
+{{- end }}
+{{- if ne (len .pair) 2 }}
+{{- fail (printf "mesh.links: pair %v must have exactly 2 elements" .pair) }}
+{{- end }}
 {{- $a := index .pair 0 }}
 {{- $b := index .pair 1 }}
+{{- if eq $a $b }}
+{{- fail (printf "mesh.links: pair %v links a node to itself" .pair) }}
+{{- end }}
 {{- $nodeA := get $labelToName $a }}
 {{- $nodeB := get $labelToName $b }}
 {{- if not $nodeA }}
