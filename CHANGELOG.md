@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and follows [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-08-05
+
+### Added ✨
+
+- Replace implicit full-mesh generation with an explicit mesh.links list
+
+### Fixed 🐛
+
+- Regenerate CRDs with valid integer formats, fix stale RBAC comment
+- Regenerate crds/*.yaml with a leading document separator
+- Validate mesh.links pairs and meshLabel uniqueness
+
 ## [0.3.0] - 2026-08-05
 
 ### Added ✨

@@ -5,7 +5,7 @@ description: >-
   CNI conflist (router), and NAT/masquerade firewall (nftables) for the slipmesh.net
   operators, deployed as DaemonSets across Talos nodes.
 type: application
-version: 0.3.0
+version: 0.4.0
 appVersion: "0.3.0"
 home: https://github.com/slipmesh/helm
 sources:
