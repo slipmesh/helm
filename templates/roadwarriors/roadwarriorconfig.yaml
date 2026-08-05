@@ -1,13 +1,22 @@
-{{- if .Values.roadwarriors.obfuscation }}
-# Optional - unlike RouterConfig, zero RoadWarriorConfig objects is valid (roadwarriors falls
-# back to no device-level obfuscation), so this is only rendered when obfuscation is actually
-# configured. More than one existing object is still an error at read time (ambiguous).
+{{- if .Values.roadwarriors.nodeHostnames }}
+# Exactly one RoadWarriorConfig object is required whenever the roadwarriors DaemonSet actually
+# runs (gated the same way as templates/roadwarriors/daemonset.yaml) - roadwarriors lists them at
+# startup and crashes if it finds zero or more than one (see RoadWarriorConfig's own CRD doc
+# comment / roadwarriors' roadwarrior_config_from_configs).
 apiVersion: slipmesh.net/v1alpha1
 kind: RoadWarriorConfig
 metadata:
   name: default
   namespace: {{ include "slipmesh.namespace" . }}
 spec:
+  iface: {{ .Values.roadwarriors.iface | quote }}
+  address: {{ .Values.roadwarriors.address | quote }}
+  listenPort: {{ .Values.roadwarriors.listenPort }}
+  {{- if .Values.roadwarriors.handshakeStaleSeconds }}
+  handshakeStaleSeconds: {{ .Values.roadwarriors.handshakeStaleSeconds }}
+  {{- end }}
+  {{- if .Values.roadwarriors.obfuscation }}
   obfuscation:
     {{- toYaml .Values.roadwarriors.obfuscation | nindent 4 }}
+  {{- end }}
 {{- end }}

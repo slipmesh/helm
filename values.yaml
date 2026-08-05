@@ -87,6 +87,11 @@ router:
   # AS 64496-64511 is IANA-reserved specifically for documentation (RFC 5398), same idea as the
   # RFC 5737/3849 example addresses used elsewhere here - never a real deployment's actual AS.
   bgpAS: 64496
+  # How often router re-resolves each bypassSources entry (RIPEstat/DNS). Left unset here on
+  # purpose - router's own built-in default (currently 24h) applies when omitted; only set this
+  # if that default is genuinely wrong for your deployment. Read once at startup - see the
+  # "startup-tracked vs restart-required" note in README.md.
+  bypassRefreshIntervalSeconds:
   # RouterNodes draw their OSPF/iBGP loopback address from this pool.
   pool: {}
 
@@ -114,7 +119,10 @@ roadwarriors:
   iface: roadwarriors
   address: ""
   listenPort: 51820
-  handshakeStaleSeconds: 180
+  # How long since a client's last handshake before its kernel route is torn down. Left unset
+  # here on purpose - roadwarriors' own built-in default (currently 180s) applies when omitted.
+  # Read once at startup - see the "startup-tracked vs restart-required" note in README.md.
+  handshakeStaleSeconds:
   # Device-level AmneziaWG obfuscation, empty by default to stay wire-compatible with plain-
   # WireGuard client configs (no Jc/Jmin/... lines in their .conf files).
   obfuscation: {}
