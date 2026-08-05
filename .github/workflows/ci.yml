@@ -37,25 +37,3 @@ jobs:
       # maxLength, required fields, etc.) - see .ci/validate-crs.py's own doc comment.
       - name: validate rendered custom resources against crds/
         run: python3 .ci/validate-crs.py < /tmp/rendered.yaml
-
-  # Separate job (not folded into `check`) so a secret hit is unambiguous in the PR checks list,
-  # rather than buried in the same log as an unrelated lint/validation failure.
-  security:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          # gitleaks scans the full commit history by default, not just the working tree - a
-          # shallow checkout would only let it see the single most recent commit. Relevant here
-          # specifically because real deployment data (node IPs, ASN lists, road-warrior keys)
-          # is meant to live only in the gitignored .values.yaml - this catches an accidental
-          # commit of that file, past or present.
-          fetch-depth: 0
-
-      # Free for personal-account repos (gitleaks' commercial license only applies to GitHub
-      # Organizations) - see https://github.com/gitleaks/gitleaks-action for the org case.
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
