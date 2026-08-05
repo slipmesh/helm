@@ -20,9 +20,9 @@ rules:
   - apiGroups: ["slipmesh.net"]
     resources: ["roadwarriors/status"]
     verbs: ["patch"]
-  # RoadWarriorConfig: device-level obfuscation, read once at startup (no reconcile loop - list
-  # only). Optional - zero objects is valid (falls back to no obfuscation), so this chart
-  # doesn't have to create one unconditionally the way router's RouterConfig requires.
+  # RoadWarriorConfig: iface/address/listenPort/obfuscation, read once at startup (no reconcile
+  # loop - list only). Mandatory, same as router's RouterConfig - exactly one object is
+  # required whenever this DaemonSet actually runs (see roadwarriorconfig.yaml).
   - apiGroups: ["slipmesh.net"]
     resources: ["roadwarriorconfigs"]
     verbs: ["list"]

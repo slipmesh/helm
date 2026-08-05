@@ -145,8 +145,12 @@ spec:
                   means "use the built-in default" (currently 180s), decided in `roadwarriors`' own code,
                   not here. Was previously the `ROADWARRIORS_HANDSHAKE_STALE` env var - unlike
                   `iface`/`address`/`listenPort`, this is a pure tuning knob with a sensible built-in
-                  default, so it stays optional.
-                format: uint64
+                  default, so it stays optional. `format = "int64"`: same non-standard-"uint64" fix as
+                  `RouterConfig.bypassRefreshIntervalSeconds`, including the same 10-years-in-seconds `max`
+                  instead of the exact `i64::MAX` (see that field's own doc comment for why - the exact
+                  bound doesn't round-trip through YAML the way `helm`'s CI validator reads it).
+                format: int64
+                maximum: 315360000.0
                 minimum: 0.0
                 nullable: true
                 type: integer
@@ -161,8 +165,10 @@ spec:
                   UDP port the interface listens on for inbound client connections. Was previously the
                   `ROADWARRIORS_LISTEN_PORT` env var. Required, and `min = 1` for the same reason
                   `RouterConfig::bgp_as` excludes 0 - schemars' derived `minimum` for a `u16` is 0, a valid
-                  `u16` but not a usable listen port.
-                format: uint16
+                  `u16` but not a usable listen port. `format = "int32"`: schemars' own derived format for a
+                  `u16` is the non-standard "uint16" (not a real OpenAPI/Kubernetes format), which the
+                  apiserver accepts but warns about - `int32` comfortably covers every `u16` value.
+                format: int32
                 maximum: 65535.0
                 minimum: 1.0
                 type: integer
