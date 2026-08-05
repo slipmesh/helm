@@ -144,7 +144,7 @@ spec:
                   How long since a client's last handshake before its kernel route is torn down - `None`
                   means "use the built-in default" (currently 180s), decided in `roadwarriors`' own code,
                   not here. Was previously the `ROADWARRIORS_HANDSHAKE_STALE` env var - unlike
-                  `iface`/`address`/`listen_port`, this is a pure tuning knob with a sensible built-in
+                  `iface`/`address`/`listenPort`, this is a pure tuning knob with a sensible built-in
                   default, so it stays optional.
                 format: uint64
                 minimum: 0.0

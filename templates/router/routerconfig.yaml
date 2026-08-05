@@ -9,6 +9,6 @@ metadata:
   namespace: {{ include "slipmesh.namespace" . }}
 spec:
   bgpAs: {{ .Values.router.bgpAS }}
-  {{- if .Values.router.bypassRefreshIntervalSeconds }}
+  {{- if ne .Values.router.bypassRefreshIntervalSeconds nil }}
   bypassRefreshIntervalSeconds: {{ .Values.router.bypassRefreshIntervalSeconds }}
   {{- end }}

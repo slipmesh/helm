@@ -9,10 +9,10 @@ metadata:
   name: default
   namespace: {{ include "slipmesh.namespace" . }}
 spec:
-  iface: {{ .Values.roadwarriors.iface | quote }}
-  address: {{ .Values.roadwarriors.address | quote }}
-  listenPort: {{ .Values.roadwarriors.listenPort }}
-  {{- if .Values.roadwarriors.handshakeStaleSeconds }}
+  iface: {{ required "roadwarriors.iface must be set when roadwarriors.nodeHostnames is non-empty" .Values.roadwarriors.iface | quote }}
+  address: {{ required "roadwarriors.address must be set (e.g. 172.22.0.1/24) when roadwarriors.nodeHostnames is non-empty" .Values.roadwarriors.address | quote }}
+  listenPort: {{ required "roadwarriors.listenPort must be set when roadwarriors.nodeHostnames is non-empty" .Values.roadwarriors.listenPort }}
+  {{- if ne .Values.roadwarriors.handshakeStaleSeconds nil }}
   handshakeStaleSeconds: {{ .Values.roadwarriors.handshakeStaleSeconds }}
   {{- end }}
   {{- if .Values.roadwarriors.obfuscation }}
