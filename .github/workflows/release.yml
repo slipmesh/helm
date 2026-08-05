@@ -1,6 +1,6 @@
 # Triggered by the `vX.Y.Z` tag pushed after a release commit bumping Chart.yaml's `version`/
 # `appVersion`. Packages the chart and pushes it as an OCI artifact to GHCR under
-# ghcr.io/<repo>/slipmesh-network, tagged with the release version - mirrors how
+# ghcr.io/<repo>/slipmesh, tagged with the release version - mirrors how
 # slipmesh/operators pushes its own images, just one artifact instead of a multi-arch matrix
 # (a Helm chart has no architecture).
 name: Release chart

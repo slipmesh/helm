@@ -1,4 +1,4 @@
-# slipmesh-network: mesh + router + nftables, full mesh across all listed `nodes`.
+# slipmesh: mesh + router + nftables, full mesh across all listed `nodes`.
 #
 # "cni" has no separate component here: router writes /etc/cni/net.d/10-slipmesh.conflist
 # itself from the node's PodCIDR at startup, using the bridge/host-local/loopback CNI plugins

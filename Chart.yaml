@@ -1,5 +1,5 @@
 apiVersion: v2
-name: slipmesh-network
+name: slipmesh
 description: >-
   Full-mesh AmneziaWG overlay (mesh), BIRD OSPF/iBGP routing + bridge CNI conflist (router),
   and NAT/masquerade firewall (nftables) for the slipmesh.net operators, deployed as

@@ -1,4 +1,4 @@
-# slipmesh-network
+# slipmesh
 
 Helm chart for the `slipmesh.net` operators (`mesh`, `router`, `nftables`, `roadwarriors`):
 a full-mesh AmneziaWG overlay between Talos nodes, BIRD OSPF/iBGP routing over that overlay,
