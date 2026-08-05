@@ -1,8 +1,9 @@
 # slipmesh
 
 Helm chart for the `slipmesh.net` operators (`mesh`, `router`, `nftables`, `roadwarriors`):
-a full-mesh AmneziaWG overlay between Talos nodes, BIRD OSPF/iBGP routing over that overlay,
-NAT/masquerade firewalling, and road-warrior (client) VPN termination.
+an AmneziaWG overlay between Talos nodes (topology is an explicit link list, not automatic
+full mesh), BIRD OSPF/iBGP routing over that overlay, NAT/masquerade firewalling, and
+road-warrior (client) VPN termination.
 
 There is no separate "cni" component: `router` writes `/etc/cni/net.d/10-slipmesh.conflist`
 itself from each node's PodCIDR at startup, using the plain `bridge`/`host-local`/`loopback`
@@ -98,22 +99,24 @@ mesh:
   pool:
     name: default
     # A /24 (or larger) private range, not colliding with pod/service CIDRs or router.pool
-    # below. MeshLinks draw /31s from it, one per full-mesh pair.
+    # below. MeshLinks draw /31s from it, one per entry in `links` below.
     network: 10.99.255.0/24
     # First UDP port handed out; each additional link gets the next one. Pick something that
     # won't collide with roadwarriors.listenPort on any node that runs both.
     basePort: 52800
 
-  # Per-link AmneziaWG obfuscation magic numbers, keyed by "<meshLabelA>-<meshLabelB>" in the
-  # same order the two nodes appear in `nodes` above (e.g. "node-a-node-b", not
-  # "node-b-node-a"). Generate distinct random values per link once (each must fit a signed
-  # 32-bit int, max 2147483647), then keep them stable - changing them flaps that link's
-  # handshake. Every unordered pair needs an entry, or that link runs plain (unobfuscated)
-  # WireGuard.
-  linkObfuscation:
-    node-a-node-b: { h1: 111111111, h2: 111111112, h3: 111111113, h4: 111111114 }
-    node-a-node-c: { h1: 222222221, h2: 222222222, h3: 222222223, h4: 222222224 }
-    node-b-node-c: { h1: 333333331, h2: 333333332, h3: 333333333, h4: 333333334 }
+  # Explicit adjacency list: one MeshLink per entry, nothing implied by `nodes` above - two
+  # nodes with no matching entry here simply never peer. `pair` names two `nodes[].meshLabel`
+  # values; the first-listed one becomes MeshLink.spec.nodeA (takes the lower /31 address).
+  # `obfuscation` (h1-h4 magic headers, each a uint32 up to 4294967295) is optional per link -
+  # omit it (like node-b/node-c below) and that link runs plain WireGuard. Generate h1-h4 once
+  # per link and keep them stable across upgrades - changing them flaps that link's handshake.
+  links:
+    - pair: [node-a, node-b]
+      obfuscation: { h1: 111111111, h2: 111111112, h3: 111111113, h4: 111111114 }
+    - pair: [node-a, node-c]
+      obfuscation: { h1: 222222221, h2: 222222222, h3: 222222223, h4: 222222224 }
+    - pair: [node-b, node-c]
 
 router:
   pool:
