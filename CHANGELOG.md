@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and follows [Semantic Versioning](https://semver.org/).
 
+## [0.4.2] - 2026-08-07
+
+### Added ✨
+
+- Run BIRD as a separate sidecar container in the router pod
+
+### Miscellaneous 🧹
+
+- Sync images with slipmesh-operators v0.3.2
+
 ## [0.4.1] - 2026-08-07
 
 ### Miscellaneous 🧹
