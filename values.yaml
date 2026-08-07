@@ -16,10 +16,10 @@ image:
   # docker.io/ffaxl/talos:<component> tags, a given version never gets republished with
   # different content, so there's no need to force a re-pull on every restart.
   pullPolicy: IfNotPresent
-  mesh: ghcr.io/slipmesh/operators/mesh:v0.3.1
-  router: ghcr.io/slipmesh/operators/router:v0.3.1
-  nftables: ghcr.io/slipmesh/operators/nftables:v0.3.1
-  roadwarriors: ghcr.io/slipmesh/operators/roadwarriors:v0.3.1
+  mesh: ghcr.io/slipmesh/operators/mesh:v0.3.2
+  router: ghcr.io/slipmesh/operators/router:v0.3.2
+  nftables: ghcr.io/slipmesh/operators/nftables:v0.3.2
+  roadwarriors: ghcr.io/slipmesh/operators/roadwarriors:v0.3.2
   # BIRD's own OSPF/iBGP daemon - a separate image from router (see slipmesh/bird), run as a
   # sidecar container in the router DaemonSet's pod, not built into router itself.
   bird: ghcr.io/slipmesh/bird:v0.1.0-bird2.19.2

@@ -6,7 +6,7 @@ description: >-
   operators, deployed as DaemonSets across Talos nodes.
 type: application
 version: 0.4.1
-appVersion: "0.3.1"
+appVersion: "0.3.2"
 home: https://github.com/slipmesh/helm
 sources:
   - https://github.com/slipmesh/helm
