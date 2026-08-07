@@ -13,8 +13,9 @@ CNI plugins already shipped in `/opt/cni/bin` on Talos v1.8+. No Calico/Flannel 
 
 - A Talos v1.8+ Kubernetes cluster, nodes reachable at real public/routable addresses.
 - Helm 3+ (server-side apply support recommended; tested against Helm 4).
-- Container images (`mesh`, `router`, `nftables`, `roadwarriors`) already published at the
-  repository referenced in `values.yaml`'s `image` block.
+- Container images (`mesh`, `router`, `nftables`, `roadwarriors`, and `bird` - BIRD's own
+  routing daemon, run as a sidecar in the `router` pod, see slipmesh/bird) already published
+  at the repository referenced in `values.yaml`'s `image` block.
 
 ## Structure
 

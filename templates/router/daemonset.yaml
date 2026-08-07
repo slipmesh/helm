@@ -30,9 +30,9 @@ spec:
           securityContext:
             capabilities:
               drop: ["ALL"]
-              # NET_RAW: bird's OSPF speaks over a raw IP socket (protocol 89), not TCP/UDP.
-              # NET_BIND_SERVICE: bird's iBGP listens on TCP/179, a privileged (<1024) port.
-              add: ["NET_ADMIN", "NET_RAW", "NET_BIND_SERVICE"]
+              # Only its own netlink calls (RtClient: router-lo, addresses) - BIRD itself now
+              # runs in the separate "bird" container below, see operators#9.
+              add: ["NET_ADMIN"]
           env:
             - name: NODE_NAME
               valueFrom:
@@ -49,8 +49,38 @@ spec:
           volumeMounts:
             - name: cni-net-d
               mountPath: /etc/cni/net.d
+            - name: bird-conf
+              mountPath: /etc/bird
+            - name: bird-run
+              mountPath: /run
+        # BIRD's own OSPF/iBGP daemon - a separate container (not spawned by router) so its
+        # release cadence and capabilities are independent of the Rust operator's, see
+        # operators#9 and slipmesh/bird. Waits for router to write /etc/bird/bird.conf if it
+        # starts first (see slipmesh/bird's wait-for-config patch) - no init container needed.
+        - name: bird
+          image: {{ .Values.image.bird }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args: ["-f", "-c", "/etc/bird/bird.conf", "-s", "/run/bird.ctl"]
+          securityContext:
+            capabilities:
+              drop: ["ALL"]
+              # NET_RAW: OSPF speaks over a raw IP socket (protocol 89), not TCP/UDP.
+              # NET_BIND_SERVICE: iBGP listens on TCP/179, a privileged (<1024) port.
+              # NET_ADMIN: installs routes into the kernel FIB.
+              add: ["NET_ADMIN", "NET_RAW", "NET_BIND_SERVICE"]
+          resources:
+            {{- toYaml .Values.resources.bird | nindent 12 }}
+          volumeMounts:
+            - name: bird-conf
+              mountPath: /etc/bird
+            - name: bird-run
+              mountPath: /run
       volumes:
         - name: cni-net-d
           hostPath:
             path: /etc/cni/net.d
             type: DirectoryOrCreate
+        - name: bird-conf
+          emptyDir: {}
+        - name: bird-run
+          emptyDir: {}
