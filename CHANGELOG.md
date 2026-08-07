@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and follows [Semantic Versioning](https://semver.org/).
 
-## [0.4.2] - 2026-08-07
+## [0.4.3] - 2026-08-07
 
 ### Added ✨
 
@@ -14,6 +14,7 @@ and follows [Semantic Versioning](https://semver.org/).
 ### Miscellaneous 🧹
 
 - Sync images with slipmesh-operators v0.3.2
+- Sync images with slipmesh-operators v0.3.3
 
 ## [0.4.1] - 2026-08-07
 
