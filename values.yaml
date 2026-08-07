@@ -16,10 +16,10 @@ image:
   # docker.io/ffaxl/talos:<component> tags, a given version never gets republished with
   # different content, so there's no need to force a re-pull on every restart.
   pullPolicy: IfNotPresent
-  mesh: ghcr.io/slipmesh/operators/mesh:v0.3.0
-  router: ghcr.io/slipmesh/operators/router:v0.3.0
-  nftables: ghcr.io/slipmesh/operators/nftables:v0.3.0
-  roadwarriors: ghcr.io/slipmesh/operators/roadwarriors:v0.3.0
+  mesh: ghcr.io/slipmesh/operators/mesh:v0.3.1
+  router: ghcr.io/slipmesh/operators/router:v0.3.1
+  nftables: ghcr.io/slipmesh/operators/nftables:v0.3.1
+  roadwarriors: ghcr.io/slipmesh/operators/roadwarriors:v0.3.1
 
 logLevel:
   mesh: "info,mesh=debug"
