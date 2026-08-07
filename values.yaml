@@ -20,6 +20,9 @@ image:
   router: ghcr.io/slipmesh/operators/router:v0.3.1
   nftables: ghcr.io/slipmesh/operators/nftables:v0.3.1
   roadwarriors: ghcr.io/slipmesh/operators/roadwarriors:v0.3.1
+  # BIRD's own OSPF/iBGP daemon - a separate image from router (see slipmesh/bird), run as a
+  # sidecar container in the router DaemonSet's pod, not built into router itself.
+  bird: ghcr.io/slipmesh/bird:v0.1.0-bird2.19.2
 
 logLevel:
   mesh: "info,mesh=debug"
@@ -36,6 +39,13 @@ resources:
       cpu: 200m
       memory: 100Mi
   router:
+    requests:
+      cpu: 20m
+      memory: 32Mi
+    limits:
+      cpu: 200m
+      memory: 100Mi
+  bird:
     requests:
       cpu: 20m
       memory: 32Mi
